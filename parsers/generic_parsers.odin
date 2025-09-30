@@ -1,4 +1,4 @@
-package er
+package parsers
 
 import "core:fmt"
 import "core:strings"
