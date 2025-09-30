@@ -1,5 +1,6 @@
 package er
 
+import "core:fmt"
 import "core:strings"
 
 Brackets :: enum {
@@ -28,6 +29,13 @@ consume_rune :: proc(str: ^string) -> rune {
   return 0
 }
 
+consume_if_starts :: proc(str: ^string, b: byte) -> bool {
+  if str[0] == b {
+    str^ = str[1:]
+    return true
+  } else do return false
+}
+
 // Return false only if it hasn't skipped `at_least` runes
 skip_whitespace :: proc(
   cursor: ^string,
@@ -37,11 +45,24 @@ skip_whitespace :: proc(
   ok: bool,
 ) {
   count := 0
-  for r, pos in cursor do if whitespace(r) {
-    count += 1
-  } else {
-    cursor^ = cursor[pos:]
-    break
+  comment := false
+  for r, pos in cursor {
+    if comment {
+      if cursor[pos - 1:pos + 1] == "*/" do comment = false
+      continue
+    }
+
+    if len(cursor) >= pos + 2 && cursor[pos:pos + 2] == "/*" {
+      comment = true
+      continue
+    }
+
+    if whitespace(r) {
+      count += 1
+    } else {
+      cursor^ = cursor[pos:]
+      break
+    }
   }
   return count >= at_least
 }
@@ -93,3 +114,16 @@ next_list_element :: proc(
   return "", false
 }
 
+parse_until :: proc(
+  cursor: ^string,
+  invalid := strings.is_separator,
+) -> (
+  s: string,
+) {
+  for r, p in cursor^ do if invalid(r) {
+    defer cursor^ = cursor[p:]
+    return cursor[:p]
+  }
+  defer cursor^ = cursor[len(cursor):]
+  return cursor^
+}

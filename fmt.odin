@@ -9,43 +9,95 @@ ATTRIBUTE_FLAGS_STRINGS := [Attribute_Flag]string {
   .Optional = "optional",
 }
 
-entities_to_string :: proc(entities: Entities) -> string {
+CARDINALITIES_STRINGS := [Relationship_Cardinality]string {
+  .ZeroOne  = "zero..one",
+  .OneMany  = "one..many",
+  .OneOne   = "one..one",
+  .ZeroMany = "zero..many",
+}
+
+// Result must be freed
+entity_to_string :: proc(name: Name, entity: Entity) -> string {
   using strings
 
   builder := builder_make_none()
   defer builder_destroy(&builder)
 
-  for e_name, entity in entities {
-    fmt.sbprintf(&builder, "entity %s", e_name)
+  fmt.sbprintf(&builder, "entity %s", name)
 
-    if len(entity.attributes) != 0 {
-      write_string(&builder, " {\n")
+  if len(entity.attributes) != 0 {
+    write_string(&builder, " {\n")
 
-      for a_name, attribute in entity.attributes {
-        fmt.sbprintf(&builder, "    %s", a_name)
+    for a_name, attribute in entity.attributes {
+      fmt.sbprintf(&builder, "    %s", a_name)
 
-        // write flags
-        if card(attribute.flags) != 0 {
-          write_string(&builder, " (")
-          for flag in attribute.flags {
-            fmt.sbprintf(&builder, "%s, ", ATTRIBUTE_FLAGS_STRINGS[flag])
-          }
-          resize(&builder.buf, len(builder.buf) - 2) // Remove last ", "
-          write_string(&builder, ")")
+      // write flags
+      if card(attribute.flags) != 0 {
+        write_string(&builder, " (")
+        for flag in attribute.flags {
+          fmt.sbprintf(&builder, "%s, ", ATTRIBUTE_FLAGS_STRINGS[flag])
         }
-
-        // write subattributes
-        if len(attribute.subAttributes) != 0 {
-
-        }
-
-        write_string(&builder, ",\n")
+        resize(&builder.buf, len(builder.buf) - 2) // Remove last ", "
+        write_byte(&builder, ')')
       }
-      resize(&builder.buf, len(builder.buf) - 2) // Remove last ", "
-      write_string(&builder, "\n}")
-    }
 
-    write_byte(&builder, '\n')
+      // write subattributes
+      if len(attribute.subAttributes) != 0 {
+        write_string(&builder, " {\n")
+        for subattr in attribute.subAttributes {
+          fmt.sbprintf(&builder, "        %s,\n", subattr)
+        }
+        resize(&builder.buf, len(builder.buf) - 2) // Remove last ",\n"
+        write_string(&builder, "\n    }")
+      }
+
+      write_string(&builder, ",\n")
+    }
+    resize(&builder.buf, len(builder.buf) - 2) // Remove last ", "
+    write_string(&builder, "\n}")
   }
+
+  return clone(to_string(builder))
+}
+
+// Result must be freed
+relationship_to_string :: proc(
+  name: Name,
+  relationship: Relationship,
+) -> string {
+  using strings
+
+  builder := builder_make_none()
+  defer builder_destroy(&builder)
+
+  fmt.sbprintf(&builder, "relationship %s", name)
+
+  if len(relationship.between) != 0 {
+    write_string(&builder, " (\n")
+
+    for member, cardinality in relationship.between {
+      fmt.sbprintfln(
+        &builder,
+        "    %s: %s,",
+        member,
+        CARDINALITIES_STRINGS[cardinality],
+      )
+    }
+    resize(&builder.buf, len(builder.buf) - 2) // Remove last ", "
+    write_string(&builder, "\n)")
+  }
+
+  if len(relationship.attributes) != 0 {
+    write_string(&builder, " {\n")
+
+    for attr, optional in relationship.attributes {
+      fmt.sbprintf(&builder, "    %s", attr)
+      if optional do write_string(&builder, " (optional)")
+      write_string(&builder, ",\n")
+    }
+    resize(&builder.buf, len(builder.buf) - 2) // Remove last ", "
+    write_string(&builder, "\n}")
+  }
+
   return clone(to_string(builder))
 }
