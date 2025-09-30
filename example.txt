@@ -1,0 +1,46 @@
+entity CITTADINO {
+    CF (id),
+    Nome,
+    Cognome,
+    Data_nascita,
+    Telefono
+}
+entity NATO_NEL_COMUNE {
+    Numero_registro,
+    Pagina
+}
+entity NATO_IN_ALTRO_COMUNE {
+    Comune_nascita
+}
+entity FAMIGLIA {
+    Domicilio {
+        Via,
+        Numero_civico,
+        Interno
+    },
+    ID (id)
+}
+
+/* Relationships */
+relationship CAPOFAMGLIA (
+    FAMIGLIA: one..one,
+    CITTADINO: zero..one
+)
+relationship MEMBRO (
+    FAMIGLIA: zero..many,
+    CITTADINO: one..one
+) {
+    Grado_parentela
+}
+
+/* Generalizations */
+CITTADINO <= {
+    NATO_NEL_COMUNE,
+    NATO_IN_ALTRO_COMUNE
+} (total, exclusive)
+
+space := ' ' [space]
+whitespace := ' '/'\n' [whitespace]
+subattrs := <name> [[whitespace] ',' [whitespace] subattrs]
+entity_attrs := <name> [whitespace] ['{' [whitespace] subattrs [whitespace] '}' [whitespace]] [',' [whitespace] entity_attrs]
+entity := 'entity' space <name> ['{' [whitespace] entity_attrs [whitespace] '}']
