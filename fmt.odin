@@ -1,15 +1,16 @@
 package er
 
+import "common"
 import "core:fmt"
 import "core:strings"
 
-ATTRIBUTE_FLAGS_STRINGS := [Attribute_Flag]string {
+ATTRIBUTE_FLAGS_STRINGS := [common.Attribute_Flag]string {
   .Id       = "id",
   .Multi    = "multi",
   .Optional = "optional",
 }
 
-CARDINALITIES_STRINGS := [Relationship_Cardinality]string {
+CARDINALITIES_STRINGS := [common.Relationship_Cardinality]string {
   .ZeroOne  = "zero..one",
   .OneMany  = "one..many",
   .OneOne   = "one..one",
@@ -17,7 +18,7 @@ CARDINALITIES_STRINGS := [Relationship_Cardinality]string {
 }
 
 // Result must be freed
-entity_to_string :: proc(name: Name, entity: Entity) -> string {
+entity_to_string :: proc(name: common.Name, entity: common.Entity) -> string {
   using strings
 
   builder := builder_make_none()
@@ -53,7 +54,7 @@ entity_to_string :: proc(name: Name, entity: Entity) -> string {
 
       write_string(&builder, ",\n")
     }
-    resize(&builder.buf, len(builder.buf) - 2) // Remove last ", "
+    resize(&builder.buf, len(builder.buf) - 2) // Remove last ",\n"
     write_string(&builder, "\n}")
   }
 
@@ -62,8 +63,8 @@ entity_to_string :: proc(name: Name, entity: Entity) -> string {
 
 // Result must be freed
 relationship_to_string :: proc(
-  name: Name,
-  relationship: Relationship,
+  name: common.Name,
+  relationship: common.Relationship,
 ) -> string {
   using strings
 
@@ -83,7 +84,7 @@ relationship_to_string :: proc(
         CARDINALITIES_STRINGS[cardinality],
       )
     }
-    resize(&builder.buf, len(builder.buf) - 2) // Remove last ", "
+    resize(&builder.buf, len(builder.buf) - 2) // Remove last ",\n"
     write_string(&builder, "\n)")
   }
 
@@ -95,9 +96,43 @@ relationship_to_string :: proc(
       if optional do write_string(&builder, " (optional)")
       write_string(&builder, ",\n")
     }
-    resize(&builder.buf, len(builder.buf) - 2) // Remove last ", "
+    resize(&builder.buf, len(builder.buf) - 2) // Remove last ",\n"
     write_string(&builder, "\n}")
   }
+
+  return clone(to_string(builder))
+}
+
+// Result must be freed
+generalization_to_string :: proc(
+  name: common.Name,
+  generalization: common.Generalization,
+) -> string {
+  using strings
+
+  builder := builder_make_none()
+  defer builder_destroy(&builder)
+
+  fmt.sbprintfln(&builder, "%s <= {{", name)
+
+  for entity in generalization.entities do fmt.sbprintfln(&builder, "    %s,", entity)
+  resize(&builder.buf, len(builder.buf) - 2) // Remove last ",\n"
+
+  write_string(&builder, "\n} (")
+
+  write_string(
+    &builder,
+    "total" if .Total in generalization.flags else "partial",
+  )
+
+  write_string(&builder, ", ")
+
+  write_string(
+    &builder,
+    "overlapping" if .Overlapping in generalization.flags else "exclusive",
+  )
+
+  write_byte(&builder, ')')
 
   return clone(to_string(builder))
 }

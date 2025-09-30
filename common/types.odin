@@ -1,4 +1,4 @@
-package er
+package common
 
 void :: struct {
 }

@@ -15,7 +15,16 @@ BRACKET_RUNES := [Brackets][2]rune {
   .Curly       = [2]rune{'{', '}'},
 }
 
+Parser_Result :: enum {
+  Incompatible,
+  Failed,
+  Succeded,
+}
+
+clone :: strings.clone
 is_a_0x20 :: proc(r: rune) -> bool {return r == ' '}
+is_space :: strings.is_space
+is_separator :: strings.is_separator
 
 consume_rune :: proc(str: ^string) -> rune {
   ru := rune(0)
@@ -40,7 +49,7 @@ consume_if_starts :: proc(str: ^string, b: byte) -> bool {
 skip_whitespace :: proc(
   cursor: ^string,
   at_least := 0,
-  whitespace := strings.is_space,
+  whitespace := is_space,
 ) -> (
   ok: bool,
 ) {
@@ -114,12 +123,7 @@ next_list_element :: proc(
   return "", false
 }
 
-parse_until :: proc(
-  cursor: ^string,
-  invalid := strings.is_separator,
-) -> (
-  s: string,
-) {
+parse_until :: proc(cursor: ^string, invalid := is_separator) -> (s: string) {
   for r, p in cursor^ do if invalid(r) {
     defer cursor^ = cursor[p:]
     return cursor[:p]
