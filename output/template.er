@@ -1,0 +1,94 @@
+{
+  "_main": {
+    "step": "erDesign",
+    "restructuringHappened": false,
+    "draftSaved": null,
+    "showMenu": false,
+    "showModal": false,
+    "containerWidth": 500,
+    "containerHeight": 580,
+    "uid": 1
+  },
+  "erDesign": {
+    "model": {
+      "uid": 33,
+      "erCode": "",
+      "sqlCode": "",
+      "itemsArray": [],
+      "itemsMap": {},
+      "sqlLinearCode": ""
+    },
+    "edited": true,
+    "sceneResetToken": 1759429259951,
+    "selectedItemId": null,
+    "selectedTool": null,
+    "oldRenamingValue": "",
+    "renamingValue": "",
+    "showRenamingInput": false,
+    "showRenamingRoleInput": false,
+    "showCardinalityMenu": false,
+    "showGeneralizationTypeMenu": false,
+    "showExportMenu": false
+  },
+  "schemaDesign": {
+    "model": {
+      "uid": 1,
+      "erCode": "",
+      "sqlCode": "",
+      "itemsArray": [],
+      "itemsMap": {},
+      "sqlLinearCode": "<h3>Relational logical schema</h3><br><h3>Referential integrity constraints</h3>"
+    },
+    "edited": true,
+    "sceneResetToken": 1759499600866,
+    "selectedItemId": null,
+    "oldRenamingValue": "",
+    "renamingValue": "",
+    "showRenamingInput": false,
+    "showDataTypeOptions": false,
+    "showReorderingMenu": false,
+    "showExportMenu": false
+  },
+  "showNotesDataMenu": false,
+  "erRestructuring": {
+    "model": {
+      "uid": 33,
+      "erCode": "",
+      "sqlCode": "",
+      "itemsArray": [],
+      "itemsMap": {},
+      "sqlLinearCode": ""
+    },
+    "edited": true,
+    "sceneResetToken": 1759499536692,
+    "selectedItemId": null,
+    "oldRenamingValue": "",
+    "renamingValue": "",
+    "showRenamingInput": false,
+    "showRenamingRoleInput": false,
+    "showMultivalueAttributeMenu": false,
+    "showCompositeAttributeMenu": false,
+    "showGeneralizationMenu": false,
+    "showExportMenu": false
+  },
+  "erTranslation": {
+    "model": {
+      "uid": 1,
+      "erCode": "",
+      "sqlCode": "",
+      "itemsArray": [],
+      "itemsMap": {},
+      "sqlLinearCode": ""
+    },
+    "edited": true,
+    "sceneResetToken": 1759499536692,
+    "selectedItemId": null,
+    "oldRenamingValue": "",
+    "renamingValue": "",
+    "showRenamingInput": false,
+    "showOneToManyTypeBRelationshipMenu": false,
+    "showOneToOneTypeBRelationshipMenu": false,
+    "showOneToOneTypeCRelationshipMenu": false,
+    "showExportMenu": false
+  }
+}

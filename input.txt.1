@@ -1,3 +1,41 @@
+entity ENT {
+    AttrA {
+        subAttrA,
+        subAttrB
+    }
+}
+
+entity ANIMALE
+entity CANE {
+    ProvaA (id),
+    ProvaB {
+      subA, subB, subC
+    },
+    ProvaC
+}
+entity GATTO {
+  A(id),
+  B,
+  C
+}
+
+relationship INSEGUE (
+  CANE: one..one,
+  GATTO: one..one
+) {
+  Attr1,
+  Attr2
+}
+
+/*
+generalizations are not working
+
+ANIMALE <= {
+  CANE,
+  GATTO
+} (partial, exclusive)
+*/
+
 entity CITTADINO {
     CF (id),
     Nome,
@@ -21,7 +59,6 @@ entity FAMIGLIA {
     ID (id)
 }
 
-/* Relationships */
 relationship CAPOFAMGLIA (
     FAMIGLIA: one..one,
     CITTADINO: zero..one
@@ -33,12 +70,13 @@ relationship MEMBRO (
     Grado_parentela
 }
 
-/* Generalizations */
+/*
 CITTADINO <= {
     NATO_NEL_COMUNE,
     NATO_IN_ALTRO_COMUNE
 } (total, exclusive)
 
+/*
 space := ' ' [space]
 whitespace := ' '/'\n' [whitespace]
 subattrs := <name> [[whitespace] ',' [whitespace] subattrs]

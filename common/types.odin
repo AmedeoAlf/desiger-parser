@@ -55,6 +55,6 @@ Generalizations :: map[Name]Generalization
 
 Database :: struct {
   entities:        Entities,
-  realationships:  Relationships,
+  relationships:   Relationships,
   generalizations: Generalizations,
 }

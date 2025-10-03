@@ -1,0 +1,57 @@
+/* Entities */
+entity PRODOTTO {
+    Nome (id),
+    Uso
+}
+entity MEDICINALE {
+    Uso,
+    Mutuabile
+}
+entity DITTA {
+    ID_Ditta (id),
+    Fax,
+    Recapito {
+        via,
+        citt,
+        CAP
+    }
+}
+entity CASSETTO {
+    ID_CASSETTO (id)
+}
+entity SCAFFALE {
+    ID_SCAFFALE (id)
+}
+entity VENDITA {
+    ID_VENDITA (id),
+    Qt,
+    Medico {
+        Cognome,
+        Nome
+    }
+}
+entity PARAFARMACO
+
+/* Relationships */
+relationship FORNIRE (
+    PRODOTTO: one..one,
+    DITTA: one..one
+)
+relationship INCLUDERE (
+    VENDITA: one..one,
+    PRODOTTO: zero..many
+)
+relationship CONTENERE_PRODOTTO (
+    CASSETTO: zero..many,
+    PRODOTTO: one..one
+)
+relationship CONTENERE_CASSETTO (
+    SCAFFALE: one..many,
+    CASSETTO: one..one
+)
+
+/* Generalizations */
+PRODOTTO <= {
+    MEDICINALE,
+    PARAFARMACO
+} (total, exclusive)

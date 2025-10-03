@@ -53,7 +53,7 @@ skip_whitespace :: proc(
 ) -> (
   ok: bool,
 ) {
-  count := 0
+  count, total := 0, 0
   comment := false
   for r, pos in cursor {
     if comment {
@@ -70,9 +70,10 @@ skip_whitespace :: proc(
       count += 1
     } else {
       cursor^ = cursor[pos:]
-      break
+      return count >= at_least
     }
   }
+  cursor^ = cursor[len(cursor):]
   return count >= at_least
 }
 

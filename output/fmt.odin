@@ -1,6 +1,6 @@
-package er
+package output
 
-import "common"
+import "../common"
 import "core:fmt"
 import "core:strings"
 
@@ -135,4 +135,27 @@ generalization_to_string :: proc(
   write_byte(&builder, ')')
 
   return clone(to_string(builder))
+}
+
+// Result must be freed
+db_to_string :: proc(db: common.Database) -> string {
+  using strings
+
+  orig_alloc := context.allocator
+  context.allocator = context.temp_allocator
+
+  builder := builder_make_none()
+  defer builder_destroy(&builder)
+
+  move_to_builder :: proc(b: ^strings.Builder, s: string) {
+    strings.write_string(b, s)
+    strings.write_byte(b, '\n')
+    delete(s)
+  }
+
+  for e_name, entity in db.entities do move_to_builder(&builder, entity_to_string(e_name, entity))
+  for r_name, rel in db.relationships do move_to_builder(&builder, relationship_to_string(r_name, rel))
+  for g_name, gen in db.generalizations do move_to_builder(&builder, generalization_to_string(g_name, gen))
+
+  return clone(to_string(builder), orig_alloc)
 }

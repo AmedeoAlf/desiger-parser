@@ -72,7 +72,7 @@ parse_relationship :: proc(
 
   rel := er.Relationship{}
 
-  if consume_if_starts(&my_cursor, '(') {
+  if len(my_cursor) > 0 && consume_if_starts(&my_cursor, '(') {
     rel.between = make(map[er.Name]er.Relationship_Cardinality)
     for my_cursor[0] != ')' {
       if member, ok := next_list_element(&my_cursor, close_on = .Parenthesis);
@@ -88,7 +88,7 @@ parse_relationship :: proc(
     skip_whitespace(&my_cursor)
   }
 
-  if consume_if_starts(&my_cursor, '{') {
+  if len(my_cursor) > 0 && consume_if_starts(&my_cursor, '{') {
     rel.attributes = make(map[er.Name]er.relationship_is_optional_t)
     for my_cursor[0] != '}' {
       if attr, ok := next_list_element(&my_cursor); !ok {

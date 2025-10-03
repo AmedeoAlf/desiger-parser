@@ -2,25 +2,17 @@ package er
 
 import "common"
 import "core:fmt"
+import "core:os"
+import "output"
 import "parsers"
 
 main :: proc() {
-  content := string(#load("example_input.txt"))
+  content := string(os.read_entire_file_from_filename("input.txt") or_else {})
 
-  entities := make(map[common.Name]common.Entity)
-  relationships := make(map[common.Name]common.Relationship)
-  generalizations := make(map[common.Name]common.Generalization)
+  db, ok := parsers.parse_file(content)
+  if !ok do os.exit(1)
 
-  using parsers
-  parse_entity(&content, &entities)
-  parse_entity(&content, &entities)
-  parse_entity(&content, &entities)
-  parse_entity(&content, &entities)
-  parse_relationship(&content, &relationships, entities)
-  parse_relationship(&content, &relationships, entities)
-  parse_generalization(&content, &generalizations, entities)
+  fmt.eprintln(output.db_to_string(db))
 
-  for n, e in entities do fmt.println(entity_to_string(n, e))
-  for n, r in relationships do fmt.println(relationship_to_string(n, r))
-  for n, g in generalizations do fmt.println(generalization_to_string(n, g))
+  output.write_er(db, os.stream_from_handle(os.stdout))
 }

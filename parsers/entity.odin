@@ -20,7 +20,7 @@ parse_attribute :: proc(
 
   attribute := er.Attribute{}
 
-  if consume_if_starts(&cursor, '(') {
+  if len(cursor) > 0 && consume_if_starts(&cursor, '(') {
     for cursor[0] != ')' {
       if el, ok := next_list_element(&cursor, close_on = .Parenthesis); !ok {
         fmt.println("Unclosed '(' inside attribute", attr_str)
@@ -81,7 +81,7 @@ parse_entity :: proc(
   // newline -> no attributes -> return
   // '{' -> has attributes
   // else -> invalid
-  if r := consume_rune(&my_cursor); r == '\n' || r != '{' {
+  if r := consume_rune(&my_cursor); r != '{' {
     if r != '\n' {
       fmt.println(
         "entity",
@@ -90,6 +90,7 @@ parse_entity :: proc(
       )
     }
     entities[clone(name)] = er.Entity{nil}
+    cursor^ = my_cursor
     return .Succeded
   }
 
